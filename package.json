@@ -1,0 +1,30 @@
+{
+    "name": "ecom",
+    "version": "1.0.0",
+    "description": "Ecommerce website demo",
+    "homepage": "https://github.com/PoChuanSu/Ecom-demo#readme",
+    "bugs": {
+        "url": "https://github.com/PoChuanSu/Ecom-demo/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/PoChuanSu/Ecom-demo.git"
+    },
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "server": "nodemon backend/server.js",
+        "client": "npm start --prefix frontend",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
+    },
+    "dependencies": {
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "mongoose": "^8.10.0"
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.2"
+    }
+}
