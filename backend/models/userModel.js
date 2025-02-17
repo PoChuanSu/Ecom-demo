@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcycpt from "bcrypt";
+import brycpt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
     {
@@ -26,8 +26,16 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcycpt.compare(enteredPassword, this.password);
+    return await brycpt.compare(enteredPassword, this.password);
 };
+
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        next();
+    }
+    const salt = await brycpt.genSalt(12);
+    this.password = await brycpt.hash(this.password, salt);
+});
 
 const User = mongoose.model("User", userSchema);
 
