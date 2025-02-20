@@ -126,5 +126,3 @@ const CartScreen = () => {
 };
 
 export default CartScreen;
-
-// Back in 15:21 pm
