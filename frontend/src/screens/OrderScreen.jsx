@@ -5,6 +5,7 @@ import Loader from "../components/Loader";
 import {
     useGetOrderDetailsQuery,
     usePayOrderMutation,
+    useDeliverOrdersMutation,
 } from "../slices/ordersApiSlice";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -19,9 +20,11 @@ const OrderScreen = () => {
     } = useGetOrderDetailsQuery(orderId);
 
     const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+    const [deliverOrder, { isLoading: loadingDeliver }] =
+        useDeliverOrdersMutation();
     const { userInfo } = useSelector((state) => state.auth);
 
-    async function onApproveTest() {
+    const onApproveTest = async () => {
         await payOrder({
             orderId,
             details: {
@@ -33,7 +36,17 @@ const OrderScreen = () => {
 
         refetch();
         toast.success("Payment Successful");
-    }
+    };
+
+    const deliverOrderHandler = async () => {
+        try {
+            await deliverOrder(orderId);
+            refetch();
+            toast.success("Payment Successful");
+        } catch (err) {
+            toast.error(err?.data?.message || err.message);
+        }
+    };
 
     return isLoading ? (
         <Loader />
@@ -138,7 +151,7 @@ const OrderScreen = () => {
                                     <Col>${order.totalPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
-                            {!order.isPaid && (
+                            {!order.isPaid && !userInfo.isAdmin && (
                                 <ListGroup.Item>
                                     {loadingPay && <Loader />}
                                     <Button
@@ -150,7 +163,21 @@ const OrderScreen = () => {
                                     </Button>
                                 </ListGroup.Item>
                             )}
-                            {/* Mark as delivered placeorder */}
+                            {loadingDeliver && <Loader />}
+                            {userInfo &&
+                                userInfo.isAdmin &&
+                                order.isPaid &&
+                                !order.isDelivered && (
+                                    <ListGroup.Item>
+                                        <Button
+                                            className="btn-dark"
+                                            onClick={deliverOrderHandler}
+                                            style={{ marginBottom: "10px" }}
+                                        >
+                                            Mark As Delivered
+                                        </Button>
+                                    </ListGroup.Item>
+                                )}
                         </ListGroup>
                     </Card>
                 </Col>
