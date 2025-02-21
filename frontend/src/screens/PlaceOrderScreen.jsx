@@ -31,7 +31,7 @@ const PlaceOrderScreen = () => {
                 shippingAddress: cart.shippingAddress,
                 paymentMethod: cart.paymentMethod,
                 itemsPrice: cart.itemsPrice,
-                shippingPrice: cart.shiipingPrice,
+                shippingPrice: cart.shipingPrice,
                 taxPrice: cart.taxPrice,
                 totalPrice: cart.totalPrice,
             }).unwrap();
@@ -44,7 +44,7 @@ const PlaceOrderScreen = () => {
 
     return (
         <>
-            <CheckoutSteps step1 step2 step3 step4 />
+            <CheckoutSteps step1 step2 step3 />
             <Row>
                 <Col md={8}>
                     <ListGroup variant="flush">
