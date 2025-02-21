@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import {
     Row,
     Col,
@@ -10,7 +11,12 @@ import {
 } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { useGetOrderDetailsQuery } from "../slices/ordersApiSlice";
+import {
+    useGetOrderDetailsQuery,
+    usePayOrderMutation,
+} from "../slices/ordersApiSlice";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const OrderScreen = () => {
     const { id: orderId } = useParams();
@@ -20,6 +26,22 @@ const OrderScreen = () => {
         isLoading,
         error,
     } = useGetOrderDetailsQuery(orderId);
+
+    const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+    const { userInfo } = useSelector((state) => state.auth);
+
+    async function onApproveTest() {
+        await payOrder({
+            orderId,
+            details: {
+                id: orderId,
+                status: "COMPLETED",
+                payer: { ...userInfo },
+            },
+        });
+        refetch();
+        toast.success("Payment successful");
+    }
 
     return isLoading ? (
         <Loader />
@@ -124,7 +146,20 @@ const OrderScreen = () => {
                                     <Col>${order.totalPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
-                            {/* PAY ORDER PLACEHOLDER */}
+                            {!order.isPaid && (
+                                <ListGroup.Item>
+                                    {loadingPay && <Loader />}
+                                    <div>
+                                        <Button
+                                            className="btn-dark"
+                                            onClick={onApproveTest}
+                                            style={{ marginBottom: "10px" }}
+                                        >
+                                            Test Pay Order
+                                        </Button>
+                                    </div>
+                                </ListGroup.Item>
+                            )}
                             {/* MARK AS DELIVERED PLACEHOLDER */}
                         </ListGroup>
                     </Card>
